@@ -8,6 +8,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/rs/zerolog/log"
@@ -119,7 +120,9 @@ func (r *Router) ServeTCP(conn tcp.WriteCloser) {
 		return
 	}
 
-	if mysql {
+	port := strings.Split(conn.LocalAddr().String(), ":")[1]
+	log.Info().Msgf("Port: %s", port)
+	if mysql && port == "3306" {
 		r.serveMysql(r.GetConn(conn, getPeeked(br)))
 		return
 	}
